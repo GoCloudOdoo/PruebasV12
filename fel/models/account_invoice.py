@@ -251,15 +251,15 @@ class AccountInvoice(models.Model):
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        ET.SubElement(ade, "ASESOR_COMERCIAL").text = self.invoice_user_id.name
-        ET.SubElement(ade, "PRESUPUESTO").text = self.invoice_origin
-        ET.SubElement(ade, "DIAS_CREDITO").text = self.invoice_payment_term_id.name
-        date_due = self.invoice_date_due
+        #ET.SubElement(ade, "ASESOR_COMERCIAL").text = self.invoice_user_id.name
+        ET.SubElement(ade, "PRESUPUESTO").text = self.origin
+        ET.SubElement(ade, "DIAS_CREDITO").text = self.payment_term_id.name
+        date_due = self.date_due
         date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
         formato2 = "%d-%m-%Y"
         date_due = date_due.strftime(formato2)
         ET.SubElement(ade, "FECHA_VENCIMIENTO").text = date_due
-        ET.SubElement(ade, "NOTAS").text = self.narration
+        ET.SubElement(ade, "NOTAS").text = self.comment
         #date_due = self.date_due
         #date_due = datetime.strptime(date_due, '%Y-%m-%d')
         #print(date_due)
