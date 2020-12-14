@@ -110,30 +110,30 @@ class AccountInvoice(models.Model):
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Factura Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           self.uuid = uuid
-           self.serie = serie
-           self.numero_dte = numero_dte
-           myTime = dateutil.parser.parse(dte_fecha)
-           racion_de_6h = timedelta(hours=6)
-           myTime = myTime + racion_de_6h
-           formato2 = "%Y-%m-%d %H:%M:%S"
-           myTime = myTime.strftime(formato2)
-           self.dte_fecha = myTime
+           #self.uuid = uuid
+           #self.serie = serie
+           #self.numero_dte = numero_dte
+           #myTime = dateutil.parser.parse(dte_fecha)
+           #racion_de_6h = timedelta(hours=6)
+           #myTime = myTime + racion_de_6h
+           #formato2 = "%Y-%m-%d %H:%M:%S"
+           #myTime = myTime.strftime(formato2)
+           #self.dte_fecha = myTime
 
         if self.type == "out_refund" and self.uuid:
            xml_data = invoice_cancel.set_data_for_invoice_cancel(self)
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Nota de Credito Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           self.uuid = uuid
-           self.serie = serie
-           self.numero_dte = numero_dte
-           myTime = dateutil.parser.parse(dte_fecha)
-           racion_de_6h = timedelta(hours=6)
-           myTime = myTime + racion_de_6h
-           formato2 = "%Y-%m-%d %H:%M:%S"
-           myTime = myTime.strftime(formato2)
-           self.dte_fecha = myTime
+           #self.uuid = uuid
+           #self.serie = serie
+           #self.numero_dte = numero_dte
+           #myTime = dateutil.parser.parse(dte_fecha)
+           #racion_de_6h = timedelta(hours=6)
+           #myTime = myTime + racion_de_6h
+           #formato2 = "%Y-%m-%d %H:%M:%S"
+           #myTime = myTime.strftime(formato2)
+           #self.dte_fecha = myTime
 
         return res
 

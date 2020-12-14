@@ -110,30 +110,30 @@ class AccountInvoice(models.Model):
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Factura Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           self.uuid = uuid
-           self.serie = serie
-           self.numero_dte = numero_dte
-           myTime = dateutil.parser.parse(dte_fecha)
-           racion_de_6h = timedelta(hours=6)
-           myTime = myTime + racion_de_6h
-           formato2 = "%Y-%m-%d %H:%M:%S"
-           myTime = myTime.strftime(formato2)
-           self.dte_fecha = myTime
+           #self.uuid = uuid
+           #self.serie = serie
+           #self.numero_dte = numero_dte
+           #myTime = dateutil.parser.parse(dte_fecha)
+           #racion_de_6h = timedelta(hours=6)
+           #myTime = myTime + racion_de_6h
+           #formato2 = "%Y-%m-%d %H:%M:%S"
+           #myTime = myTime.strftime(formato2)
+           #self.dte_fecha = myTime
 
         if self.type == "out_refund" and self.uuid:
            xml_data = invoice_cancel.set_data_for_invoice_cancel(self)
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Nota de Credito Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           self.uuid = uuid
-           self.serie = serie
-           self.numero_dte = numero_dte
-           myTime = dateutil.parser.parse(dte_fecha)
-           racion_de_6h = timedelta(hours=6)
-           myTime = myTime + racion_de_6h
-           formato2 = "%Y-%m-%d %H:%M:%S"
-           myTime = myTime.strftime(formato2)
-           self.dte_fecha = myTime
+           #self.uuid = uuid
+           #self.serie = serie
+           #self.numero_dte = numero_dte
+           #myTime = dateutil.parser.parse(dte_fecha)
+           #racion_de_6h = timedelta(hours=6)
+           #myTime = myTime + racion_de_6h
+           #formato2 = "%Y-%m-%d %H:%M:%S"
+           #myTime = myTime.strftime(formato2)
+           #self.dte_fecha = myTime
 
         return res
 
@@ -251,15 +251,15 @@ class AccountInvoice(models.Model):
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        ET.SubElement(ade, "ASESOR_COMERCIAL").text = self.invoice_user_id.name
-        ET.SubElement(ade, "PRESUPUESTO").text = self.invoice_origin
-        ET.SubElement(ade, "DIAS_CREDITO").text = self.invoice_payment_term_id.name
-        date_due = self.invoice_date_due
+        #ET.SubElement(ade, "ASESOR_COMERCIAL").text = self.invoice_user_id.name
+        ET.SubElement(ade, "PRESUPUESTO").text = self.origin
+        ET.SubElement(ade, "DIAS_CREDITO").text = self.payment_term_id.name
+        date_due = self.date_due
         date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
         formato2 = "%d-%m-%Y"
         date_due = date_due.strftime(formato2)
         ET.SubElement(ade, "FECHA_VENCIMIENTO").text = date_due
-        ET.SubElement(ade, "NOTAS").text = self.narration
+        ET.SubElement(ade, "NOTAS").text = self.comment
         #date_due = self.date_due
         #date_due = datetime.strptime(date_due, '%Y-%m-%d')
         #print(date_due)
