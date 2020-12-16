@@ -13,7 +13,6 @@ from odoo.addons.fel.models import credit_note
 from odoo.addons.fel.models import invoice_cancel
 from odoo.addons.fel.models import invoice_special
 from odoo.addons.fel.models import nota_abono
-#from zeep import Client
 import json
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError, Warning
 import logging
@@ -30,7 +29,6 @@ class AccountInvoice(models.Model):
     
     @api.multi
     def action_invoice_open(self):
-        # Cambiada para procesar los datos devueltos por WS
         if self.journal_id.is_eface == False:
            return super(AccountInvoice, self).action_invoice_open()
         res = super(AccountInvoice, self).action_invoice_open()
@@ -65,7 +63,6 @@ class AccountInvoice(models.Model):
 
         if self.type == "out_refund" and self.uuid:
            xml_data = credit_note.set_data_for_invoice_credit(self)
-           #print ("xml credit note:",xml_data)
            self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
            uuid, serie, numero_dte, dte_fecha =credit_note.send_data_api_credit(self, xml_data)
            message = _("Nota de Credito: Serie %s  Numero %s") % (serie, numero_dte)
@@ -82,7 +79,6 @@ class AccountInvoice(models.Model):
 
         if self.type == "out_refund" and self.nota_abono == True:
            xml_data = nota_abono.set_data_for_invoice_abono(self)
-           #print ("xml credit note:",xml_data)
            self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
            uuid, serie, numero_dte, dte_fecha =nota_abono.send_data_api_abono(self, xml_data)
            message = _("Nota de Credito: Serie %s  Numero %s") % (serie, numero_dte)
@@ -101,7 +97,6 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def action_invoice_cancel(self):
-        # Cambiada para procesar los datos devueltos por WS
         if self.journal_id.is_eface == False:
            return super(AccountInvoice, self).action_invoice_cancel()
         res = super(AccountInvoice, self).action_invoice_cancel()
@@ -110,30 +105,12 @@ class AccountInvoice(models.Model):
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Factura Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           #self.uuid = uuid
-           #self.serie = serie
-           #self.numero_dte = numero_dte
-           #myTime = dateutil.parser.parse(dte_fecha)
-           #racion_de_6h = timedelta(hours=6)
-           #myTime = myTime + racion_de_6h
-           #formato2 = "%Y-%m-%d %H:%M:%S"
-           #myTime = myTime.strftime(formato2)
-           #self.dte_fecha = myTime
 
         if self.type == "out_refund" and self.uuid:
            xml_data = invoice_cancel.set_data_for_invoice_cancel(self)
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
            message = _("Nota de Credito Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
-           #self.uuid = uuid
-           #self.serie = serie
-           #self.numero_dte = numero_dte
-           #myTime = dateutil.parser.parse(dte_fecha)
-           #racion_de_6h = timedelta(hours=6)
-           #myTime = myTime + racion_de_6h
-           #formato2 = "%Y-%m-%d %H:%M:%S"
-           #myTime = myTime.strftime(formato2)
-           #self.dte_fecha = myTime
 
         return res
 
@@ -151,16 +128,16 @@ class AccountInvoice(models.Model):
         doc = ET.SubElement(root, "{" + xmlns + "}SAT", ClaseDocumento="dte")
         dte = ET.SubElement(doc, "{" + xmlns + "}DTE", ID="DatosCertificados")
         dem = ET.SubElement(dte, "{" + xmlns + "}DatosEmision", ID="DatosEmision")
-        #fecha_emision = dt.datetime.now(gettz("America/Guatemala")).isoformat()   #dt.datetime.now().isoformat()
         fecha_emision = dt.datetime.now(gettz("America/Guatemala")).__format__('%Y-%m-%dT%H:%M:%S.%f')[:-3]
         dge = ET.SubElement(dem, "{" + xmlns + "}DatosGenerales", CodigoMoneda="GTQ",  FechaHoraEmision=fecha_emision, Tipo="FACT")
         emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento="1", CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=self.company_id.name, NombreEmisor=self.company_id.name)
         dire = ET.SubElement(emi, "{" + xmlns + "}DireccionEmisor")
-        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = self.company_id.street #"4 Avenida 19-26 zona 10"
-        ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = "01009"
-        ET.SubElement(dire, "{" + xmlns + "}Municipio").text = "Guatemala"
-        ET.SubElement(dire, "{" + xmlns + "}Departamento").text = "Guatemala"
-        ET.SubElement(dire, "{" + xmlns + "}Pais").text = "GT"
+        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = self.company_id.street
+        ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = self.company_id.zip or "01009"
+        ET.SubElement(dire, "{" + xmlns + "}Municipio").text = self.company_id.city or "Guatemala"
+        ET.SubElement(dire, "{" + xmlns + "}Departamento").text = self.company_id.state_id.name or "Guatemala"
+        ET.SubElement(dire, "{" + xmlns + "}Pais").text = self.company_id.country_id.code or "GT"        
+        
 
         if self.partner_id.vat:
            vat = self.partner_id.vat
@@ -169,14 +146,13 @@ class AccountInvoice(models.Model):
         else:
             vat = "CF"
 
-        #if self.partner_id.vat:
         rece = ET.SubElement(dem, "{" + xmlns + "}Receptor", CorreoReceptor=self.partner_id.email or "", IDReceptor=vat, NombreReceptor=self.partner_id.name)
         direc = ET.SubElement(rece, "{" + xmlns + "}DireccionReceptor")
         ET.SubElement(direc, "{" + xmlns + "}Direccion").text = self.partner_id.street or "Ciudad"
-        ET.SubElement(direc, "{" + xmlns + "}CodigoPostal").text = "01009"
-        ET.SubElement(direc, "{" + xmlns + "}Municipio").text = "Guatemala"
-        ET.SubElement(direc, "{" + xmlns + "}Departamento").text = "Guatemala"
-        ET.SubElement(direc, "{" + xmlns + "}Pais").text = "GT"
+        ET.SubElement(direc, "{" + xmlns + "}CodigoPostal").text = self.partner_id.zip or "01009"
+        ET.SubElement(direc, "{" + xmlns + "}Municipio").text = self.partner_id.city or "Guatemala"
+        ET.SubElement(direc, "{" + xmlns + "}Departamento").text = self.partner_id.state_id.name or "Guatemala"
+        ET.SubElement(direc, "{" + xmlns + "}Pais").text = self.partner_id.country_id.code or "GT"
 
         #Frases
         fra = ET.SubElement(dem, "{" + xmlns + "}Frases")
@@ -231,7 +207,6 @@ class AccountInvoice(models.Model):
             SubTotal = str(round(line.price_subtotal,2))
             if self.partner_id.tax_partner == True and line.product_id.tax_product == True:
                UnidadGravable = "2"
-               #SubTotal = "0.00"
                price_tax = "0.00"
             ET.SubElement(impuesto, "{" + xmlns + "}NombreCorto").text = tax
             ET.SubElement(impuesto, "{" + xmlns + "}CodigoUnidadGravable").text = UnidadGravable
@@ -246,12 +221,10 @@ class AccountInvoice(models.Model):
 
         #Adenda
         ade = ET.SubElement(doc, "{" + xmlns + "}Adenda")
-        #ET.SubElement(ade, "NITEXTRANJERO").text = "111111"
         ET.SubElement(ade, "CAJERO").text = "1"
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        #ET.SubElement(ade, "ASESOR_COMERCIAL").text = self.invoice_user_id.name
         ET.SubElement(ade, "PRESUPUESTO").text = self.origin
         ET.SubElement(ade, "DIAS_CREDITO").text = self.payment_term_id.name
         date_due = self.date_due
@@ -260,25 +233,12 @@ class AccountInvoice(models.Model):
         date_due = date_due.strftime(formato2)
         ET.SubElement(ade, "FECHA_VENCIMIENTO").text = date_due
         ET.SubElement(ade, "NOTAS").text = self.comment
-        #date_due = self.date_due
-        #date_due = datetime.strptime(date_due, '%Y-%m-%d')
-        #print(date_due)
-        #print(date_due.date) 
-        #racion_de_6h = timedelta(hours=6)
-        #print(type(racion_de_6h))
-        #date_due = date_due - racion_de_6h
-        #formato2 = "%d-%m-%Y"
-        #date_due = date_due.strftime(formato2)
-        #ET.SubElement(ade, "FechaVencimiento").text = date_due
-
         cont = ET.tostring(root, encoding="UTF-8", method='xml')
         buscar = "ns0"
         rmpl = "dte"
         cont = cont.decode('utf_8')
         cont = cont.replace(buscar, rmpl)
-        print ("final:",cont)
         cont = cont.encode('utf_8')
-        #print ("finasl:",cont)
         dat = base64.b64encode(cont)
         return dat
 
