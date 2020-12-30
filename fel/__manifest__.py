@@ -4,7 +4,7 @@
     'name': 'Factura Electronica',
     'summary': """Web service integrado con Infile S.A""",
     'version': '12.0.1.0.',
-    'description': """Factura Electronica para Guatemala""",
+    'description': """Factura Electronica para Guatemala.""",
     'author': 'Osmin Cano --> osmincano@gmail.com',
     'maintainer': 'Osmin Cano',
     'website': 'http://odoo.com',
