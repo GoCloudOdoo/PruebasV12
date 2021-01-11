@@ -239,7 +239,7 @@ class AccountInvoice(models.Model):
         cont = cont.decode('utf_8')
         cont = cont.replace(buscar, rmpl)
         cont = cont.encode('utf_8')
-        raise UserError(_("You cannot validate an invoice\n Error: %s"% (cont)))
+        #raise UserError(_("You cannot validate an invoice\n Error: %s"% (cont)))
         dat = base64.b64encode(cont)
         return dat
 
