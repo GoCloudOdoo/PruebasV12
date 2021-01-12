@@ -103,7 +103,7 @@ def set_data_for_invoice_credit(self):
         ET.SubElement(totales, "{" + xmlns + "}GranTotal").text = str(round(self.amount_total,2))
 
         #Complementos
-        dte_fecha = self.dte_fecha
+        dte_fecha = self.refund_invoice_id.dte_fecha
         dte_fecha = datetime.strptime(str(dte_fecha), '%Y-%m-%d %H:%M:%S')
         racion_de_6h = timedelta(hours=6)
         dte_fecha = dte_fecha - racion_de_6h
@@ -112,9 +112,9 @@ def set_data_for_invoice_credit(self):
         complementos = ET.SubElement(dem, "{" + xmlns + "}Complementos")
         complemento = ET.SubElement(complementos, "{" + xmlns + "}Complemento", IDComplemento=str(randint(1,99999)), NombreComplemento=self.name, URIComplemento=cno)
         if self.regimen_antiguo == False:
-           ET.SubElement(complemento, "{" + cno + "}ReferenciasNota", FechaEmisionDocumentoOrigen=dte_fecha, MotivoAjuste=self.name, NumeroAutorizacionDocumentoOrigen=str(self.uuid), NumeroDocumentoOrigen=str(self.numero_dte), SerieDocumentoOrigen=str(self.serie), Version="0.1")
+           ET.SubElement(complemento, "{" + cno + "}ReferenciasNota", FechaEmisionDocumentoOrigen=dte_fecha, MotivoAjuste=self.name, NumeroAutorizacionDocumentoOrigen=str(self.refund_invoice_id.uuid), NumeroDocumentoOrigen=str(self.refund_invoice_id.numero_dte), SerieDocumentoOrigen=str(self.refund_invoice_id.serie), Version="0.1")
         if self.regimen_antiguo == True:
-           ET.SubElement(complemento, "{" + cno + "}ReferenciasNota", FechaEmisionDocumentoOrigen=dte_fecha, RegimenAntiguo="Antiguo", MotivoAjuste=self.name, NumeroAutorizacionDocumentoOrigen=str(self.uuid),NumeroDocumentoOrigen=str(self.numero_dte), SerieDocumentoOrigen=str(self.serie), Version="0.1")
+           ET.SubElement(complemento, "{" + cno + "}ReferenciasNota", FechaEmisionDocumentoOrigen=dte_fecha, RegimenAntiguo="Antiguo", MotivoAjuste=self.name, NumeroAutorizacionDocumentoOrigen=str(self.refund_invoice_id.uuid),NumeroDocumentoOrigen=str(self.refund_invoice_id.numero_dte), SerieDocumentoOrigen=str(self.refund_invoice_id.serie), Version="0.1")
         #Adenda
         ade = ET.SubElement(doc, "{" + xmlns + "}Adenda")
         ET.SubElement(ade, "CAJERO").text = "1"

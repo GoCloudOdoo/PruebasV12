@@ -61,7 +61,7 @@ class AccountInvoice(models.Model):
            myTime = myTime.strftime(formato2)
            self.dte_fecha = myTime
 
-        if self.type == "out_refund" and self.uuid:
+        if self.type == "out_refund" and self.refund_invoice_id:
            xml_data = credit_note.set_data_for_invoice_credit(self)
            self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
            uuid, serie, numero_dte, dte_fecha =credit_note.send_data_api_credit(self, xml_data)

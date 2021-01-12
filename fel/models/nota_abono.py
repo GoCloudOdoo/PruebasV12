@@ -25,12 +25,12 @@ def set_data_for_invoice_abono(self):
         xmlns = "http://www.sat.gob.gt/dte/fel/0.2.0"
         xsi = "http://www.w3.org/2001/XMLSchema-instance"
         schemaLocation = "http://www.sat.gob.gt/dte/fel/0.2.0"
-        version = "0.4"
+        version = "0.1"
         ns = "{xsi}"
         DTE= "dte"
         cno = "http://www.sat.gob.gt/face2/ComplementoReferenciaNota/0.1.0"
 
-        root = ET.Element("{" + xmlns + "}GTDocumento", Version="0.4", attrib={"{" + xsi + "}schemaLocation" : schemaLocation})
+        root = ET.Element("{" + xmlns + "}GTDocumento", Version="0.1", attrib={"{" + xsi + "}schemaLocation" : schemaLocation})
         doc = ET.SubElement(root, "{" + xmlns + "}SAT", ClaseDocumento="dte")
         dte = ET.SubElement(doc, "{" + xmlns + "}DTE", ID="DatosCertificados")
         dem = ET.SubElement(dte, "{" + xmlns + "}DatosEmision", ID="DatosEmision")
@@ -97,7 +97,7 @@ def set_data_for_invoice_abono(self):
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
         date_due = self.date_due
-        date_due = datetime.strptime(date_due, '%Y-%m-%d')
+        date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
         formato2 = "%d-%m-%Y"
         date_due = date_due.strftime(formato2)
         ET.SubElement(ade, "FechaVencimiento").text = date_due
