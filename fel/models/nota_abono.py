@@ -39,10 +39,10 @@ def set_data_for_invoice_abono(self):
         emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento="1", CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=self.company_id.name, NombreEmisor=self.company_id.name)
         dire = ET.SubElement(emi, "{" + xmlns + "}DireccionEmisor")
         ET.SubElement(dire, "{" + xmlns + "}Direccion").text = self.company_id.street
-        ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = "01009"
-        ET.SubElement(dire, "{" + xmlns + "}Municipio").text = "Guatemala"
-        ET.SubElement(dire, "{" + xmlns + "}Departamento").text = "Guatemala"
-        ET.SubElement(dire, "{" + xmlns + "}Pais").text = "GT"
+        ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = self.company_id.zip or "01009"
+        ET.SubElement(dire, "{" + xmlns + "}Municipio").text = self.company_id.city or "Guatemala"
+        ET.SubElement(dire, "{" + xmlns + "}Departamento").text = self.company_id.state_id.name or "Guatemala"
+        ET.SubElement(dire, "{" + xmlns + "}Pais").text = self.company_id.country_id.code or "GT"
 
         if self.partner_id.vat:
            vat = self.partner_id.vat
@@ -54,10 +54,10 @@ def set_data_for_invoice_abono(self):
         rece = ET.SubElement(dem, "{" + xmlns + "}Receptor", CorreoReceptor=self.partner_id.email or "", IDReceptor=vat, NombreReceptor=self.partner_id.name)
         direc = ET.SubElement(rece, "{" + xmlns + "}DireccionReceptor")
         ET.SubElement(direc, "{" + xmlns + "}Direccion").text = self.partner_id.street or "Ciudad"
-        ET.SubElement(direc, "{" + xmlns + "}CodigoPostal").text = "01009"
-        ET.SubElement(direc, "{" + xmlns + "}Municipio").text = "Guatemala"
-        ET.SubElement(direc, "{" + xmlns + "}Departamento").text = "Guatemala"
-        ET.SubElement(direc, "{" + xmlns + "}Pais").text = "GT"
+        ET.SubElement(direc, "{" + xmlns + "}CodigoPostal").text = self.partner_id.zip or "01009"
+        ET.SubElement(direc, "{" + xmlns + "}Municipio").text = self.partner_id.city or "Guatemala"
+        ET.SubElement(direc, "{" + xmlns + "}Departamento").text = self.partner_id.state_id.name or "Guatemala"
+        ET.SubElement(direc, "{" + xmlns + "}Pais").text = self.partner_id.country_id.code or "GT"
 
         invoice_line = self.invoice_line_ids
         items = ET.SubElement(dem, "{" + xmlns + "}Items")
@@ -96,11 +96,6 @@ def set_data_for_invoice_abono(self):
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        #date_due = self.date_due
-        #date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
-        #formato2 = "%Y-%m-%d"
-        #date_due = date_due.strftime(formato2)
-        #ET.SubElement(ade, "FechaVencimiento").text = date_due
 
         cont = ET.tostring(root, encoding="UTF-8", method='xml')
         buscar = "ns0"

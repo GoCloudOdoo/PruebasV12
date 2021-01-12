@@ -81,7 +81,7 @@ class AccountInvoice(models.Model):
            xml_data = nota_abono.set_data_for_invoice_abono(self)
            self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
            uuid, serie, numero_dte, dte_fecha =nota_abono.send_data_api_abono(self, xml_data)
-           message = _("Nota de Credito: Serie %s  Numero %s") % (serie, numero_dte)
+           message = _("Nota de Abono: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
            self.uuid = uuid
            self.serie = serie
@@ -109,7 +109,7 @@ class AccountInvoice(models.Model):
         if self.type == "out_refund" and self.uuid:
            xml_data = invoice_cancel.set_data_for_invoice_cancel(self)
            uuid, serie, numero_dte, dte_fecha =invoice_cancel.send_data_api_cancel(self, xml_data)
-           message = _("Nota de Credito Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
+           message = _("Nota Cancelada: Serie %s  Numero %s") % (serie, numero_dte)
            self.message_post(body=message)
 
         return res
