@@ -114,7 +114,7 @@ class AccountInvoice(models.Model):
 
         date_due = self.date_due
         date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
-        formato2 = "%d-%m-%Y"
+        formato2 = "%Y-%m-%d"
         date_due = date_due.strftime(formato2)
         complementos = ET.SubElement(dem, "{" + xmlns + "}Complementos")
         complemento = ET.SubElement(complementos, "{" + xmlns + "}Complemento", IDComplemento=str(randint(1,99999)), NombreComplemento="AbonosFacturaCambiaria", URIComplemento=uri)

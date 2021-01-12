@@ -96,11 +96,11 @@ def set_data_for_invoice_abono(self):
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        date_due = self.date_due
-        date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
-        formato2 = "%d-%m-%Y"
-        date_due = date_due.strftime(formato2)
-        ET.SubElement(ade, "FechaVencimiento").text = date_due
+        #date_due = self.date_due
+        #date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
+        #formato2 = "%Y-%m-%d"
+        #date_due = date_due.strftime(formato2)
+        #ET.SubElement(ade, "FechaVencimiento").text = date_due
 
         cont = ET.tostring(root, encoding="UTF-8", method='xml')
         buscar = "ns0"
