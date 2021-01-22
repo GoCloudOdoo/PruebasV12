@@ -1,24 +1,36 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models
-#from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
+from odoo import api, fields, models, _
 
 class AccountInvoice(models.Model):
-        _inherit = "account.invoice"
+    _inherit = "account.invoice"
 
-        uuid = fields.Char("Numero Autorizacion", readonly=True, states={'draft': [('readonly', False)]})
-        serie = fields.Char("Serie", readonly=True, states={'draft': [('readonly', False)]})
-        numero_dte = fields.Char("Numero DTE", readonly=True, states={'draft': [('readonly', False)]})
-        dte_fecha = fields.Datetime("Fecha Autorizacion", readonly=True, states={'draft': [('readonly', False)]})
-        cae = fields.Text("CAE", readonly=True, states={'draft': [('readonly', False)]})
-        letras = fields.Text("Total Letras", readonly=True, states={'draft': [('readonly', False)]})
-        tipo_f = fields.Selection([
-            ('normal', 'Factura Normal'),
-            ('cambiaria', 'Factura Cambiaria'),
-            ], string='Tipo Factura', default='normal', readonly=True, states={'draft': [('readonly', False)]})
-        regimen_antiguo = fields.Boolean(string="Nota de credito rebajando regimen antiguo", readonly=True, states={'draft': [('readonly', False)]}, default=False)
-        nota_abono = fields.Boolean(string="Nota de Abono", readonly=True, states={'draft': [('readonly', False)]}, default=False)
+    uuid = fields.Char("Numero Autorizacion", readonly=True, states={'draft': [('readonly', False)]})
+    serie = fields.Char("Serie", readonly=True, states={'draft': [('readonly', False)]})
+    numero_dte = fields.Char("Numero DTE", readonly=True, states={'draft': [('readonly', False)]})
+    dte_fecha = fields.Datetime("Fecha Autorizacion", readonly=True, states={'draft': [('readonly', False)]})
+    cae = fields.Text("CAE", readonly=True, states={'draft': [('readonly', False)]})
+    letras = fields.Text("Total Letras", readonly=True, states={'draft': [('readonly', False)]})
+    tipo_f = fields.Selection([
+        ('normal', 'Factura Normal'),
+        ('cambiaria', 'Factura Cambiaria'),
+        ], string='Tipo Factura', default='normal', readonly=True, states={'draft': [('readonly', False)]})
+    regimen_antiguo = fields.Boolean(string="Nota de credito rebajando regimen antiguo", readonly=True, states={'draft': [('readonly', False)]}, default=False)
+    nota_abono = fields.Boolean(string="Nota de Abono", readonly=True, states={'draft': [('readonly', False)]}, default=False)
 
+    @api.multi
+    def ver_factura(self):
+        for invoice in self:
+            uuid = invoice.uuid
+            if not uuid:
+                return False 
+        sitio ={  'name'     : 'Ver Factura',
+                  'res_model': 'ir.actions.act_url',
+                  'type'     : 'ir.actions.act_url',
+                  'target'   : 'new',
+                  'url'      : 'https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid='+uuid
+               }
+        return sitio
+        
 AccountInvoice()
 

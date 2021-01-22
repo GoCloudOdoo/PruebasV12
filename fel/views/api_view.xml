@@ -36,6 +36,8 @@
                 <tree string="API Configuration">
                     <field name="user"/>
                     <field name="code_est"/>
+                    <field name="nombre"/>
+                    <field name="user_id"/>                                        
                 </tree>
             </field>
         </record>
