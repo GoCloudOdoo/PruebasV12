@@ -11,7 +11,6 @@ from dateutil import parser
 from odoo.addons.fel import numero_a_texto
 from odoo.addons.fel.models import credit_note
 from odoo.addons.fel.models import invoice_cancel
-from odoo.addons.fel.models import invoice_special
 from odoo.addons.fel.models import nota_abono
 import json
 from odoo.exceptions import AccessError, UserError, RedirectWarning, ValidationError, Warning
@@ -37,18 +36,10 @@ class AccountInvoice(models.Model):
               xml_data = self.set_data_for_invoice()
               self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
               uuid, serie, numero_dte, dte_fecha =self.send_data_api(xml_data)
-           if self.tipo_f == 'especial':
-              xml_data = self.set_data_for_invoice_special()
-              self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
-              uuid, serie, numero_dte, dte_fecha =self.send_data_api_special(xml_data)
            if self.tipo_f == 'cambiaria':
               xml_data = self.set_data_for_invoice_cambiaria()
               self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
               uuid, serie, numero_dte, dte_fecha =self.send_data_api_cambiaria(xml_data)
-           if self.tipo_f == 'cambiaria_exp':
-              xml_data = self.set_data_for_invoice_cambiaria_exp()
-              self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
-              uuid, serie, numero_dte, dte_fecha =self.send_data_api_cambiaria_exp(xml_data)
            message = _("Facturacion Electronica %s: Serie %s  Numero %s") % (self.tipo_f, serie, numero_dte)
            self.message_post(body=message)
            self.uuid = uuid
@@ -130,9 +121,12 @@ class AccountInvoice(models.Model):
         dem = ET.SubElement(dte, "{" + xmlns + "}DatosEmision", ID="DatosEmision")
         fecha_emision = dt.datetime.now(gettz("America/Guatemala")).__format__('%Y-%m-%dT%H:%M:%S.%f')[:-3]
         dge = ET.SubElement(dem, "{" + xmlns + "}DatosGenerales", CodigoMoneda="GTQ",  FechaHoraEmision=fecha_emision, Tipo="FACT")
-        emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento="1", CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=self.company_id.name, NombreEmisor=self.company_id.name)
+        api = self.env['api.data.configuration'].search([('user_id', '=', self.user_id.id)], limit=1)
+        if not api:
+            return False        
+        emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento=api.code_est, CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=api.nombre, NombreEmisor=self.company_id.name)
         dire = ET.SubElement(emi, "{" + xmlns + "}DireccionEmisor")
-        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = self.company_id.street
+        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = api.direccion
         ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = self.company_id.zip or "01009"
         ET.SubElement(dire, "{" + xmlns + "}Municipio").text = self.company_id.city or "Guatemala"
         ET.SubElement(dire, "{" + xmlns + "}Departamento").text = self.company_id.state_id.name or "Guatemala"
@@ -244,7 +238,7 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def send_data_api(self, xml_data=None):
-        api = self.env['api.data.configuration'].search([])[0]
+        api = self.env['api.data.configuration'].search([('user_id', '=', self.user_id.id)], limit=1)        
         if not api:
             return False
         XML = xml_data

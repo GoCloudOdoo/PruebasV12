@@ -9,9 +9,10 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def ver_factura(self):
-        uuid = "FAC"
         for invoice in self:
             uuid = invoice.uuid
+            if not uuid:
+                return False 
         sitio ={  'name'     : 'Ver Factura',
                   'res_model': 'ir.actions.act_url',
                   'type'     : 'ir.actions.act_url',

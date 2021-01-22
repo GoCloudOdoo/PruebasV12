@@ -8,17 +8,19 @@ class APIModelConfiguration(models.Model):
     _name = "api.data.configuration"
     _description = """Configuration FEL"""
 
+    client_code = fields.Char(string="Client Code", required=False, default="56515219")
+    user_code = fields.Char(string="User Code", required=False, default="ADMIN")
+    vendor_nit = fields.Char(string="Vendor NIT", required=False, default="56515219")
+    eface_store_number = fields.Char(string="EFACE store number", default="2")
+    gov_auth_number = fields.Char(string="Gov authorization number", default="2017-5-1081890-481")
     company_id = fields.Many2one('res.company', 'Empresa')
-    user = fields.Char(string="Usuario Servicio Web", required=True)
+    user = fields.Char(string="Usuario", required=True)
     key_firma = fields.Char(string="Llave Firma xml", required=True)
     url_firma = fields.Char(string="URL Firma xml", required=True)
     key_certificado = fields.Char(string="Llave Certificacion", required=True)
     url_certificado = fields.Char(string="URL Certificacion", required=True)
     url_anulacion = fields.Char(string="URL Anulacion", required=True)
     code_est = fields.Char(string="Codigo Establecimiento", required=True)
-    user_id = fields.Many2one('res.users', string='Usuario Sistema', required=True)
-    nombre = fields.Char(string="Nombre Establecimiento", required=True)
-    direccion = fields.Char(string="Direccion Establecimiento", required=True)    
 
 
 class ResCompany(models.Model):

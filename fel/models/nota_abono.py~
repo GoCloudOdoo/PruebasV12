@@ -96,11 +96,6 @@ def set_data_for_invoice_abono(self):
         ET.SubElement(ade, "VENDEDOR").text = "1"
         ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
         ET.SubElement(ade, "Fuente").text = self.user_id.name
-        #date_due = self.date_due
-        #date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
-        #formato2 = "%Y-%m-%d"
-        #date_due = date_due.strftime(formato2)
-        #ET.SubElement(ade, "FechaVencimiento").text = date_due
 
         cont = ET.tostring(root, encoding="UTF-8", method='xml')
         buscar = "ns0"
@@ -113,7 +108,7 @@ def set_data_for_invoice_abono(self):
 
 @api.multi
 def send_data_api_abono(self, xml_data):
-        api = self.env['api.data.configuration'].search([])[0]
+        api = self.env['api.data.configuration'].search([('user_id', '=', self.user_id.id)], limit=1)        
         if not api:
             return False
         XML = xml_data

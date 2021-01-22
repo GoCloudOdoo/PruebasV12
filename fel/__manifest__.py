@@ -21,7 +21,7 @@
     'sequence': 1,
     'installable': True,
     'auto_install': False,
-    'application': True,
+    'application': False,
 
 
 }

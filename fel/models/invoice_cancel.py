@@ -59,7 +59,7 @@ def set_data_for_invoice_cancel(self):
 
 @api.multi
 def send_data_api_cancel(self, xml_data):
-        api = self.env['api.data.configuration'].search([])[0]
+        api = self.env['api.data.configuration'].search([('user_id', '=', self.user_id.id)], limit=1)        
         if not api:
             return False
         XML = xml_data
