@@ -51,6 +51,23 @@ class AccountInvoice(models.Model):
            formato2 = "%Y-%m-%d %H:%M:%S"
            myTime = myTime.strftime(formato2)
            self.dte_fecha = myTime
+           
+        if self.type == "in_invoice":
+           if self.tipo_f == 'especial':
+              xml_data = self.set_data_for_invoice_special()
+              self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
+              uuid, serie, numero_dte, dte_fecha =self.send_data_api_special(xml_data)
+              message = _("Facturacion Electronica Especial %s: Serie %s  Numero %s") % (self.tipo_f, serie, numero_dte)
+              self.message_post(body=message)
+              self.uuid = uuid
+              self.serie = serie
+              self.numero_dte = numero_dte
+              myTime = dateutil.parser.parse(dte_fecha)
+              racion_de_6h = timedelta(hours=6)
+              myTime = myTime + racion_de_6h
+              formato2 = "%Y-%m-%d %H:%M:%S"
+              myTime = myTime.strftime(formato2)
+              self.dte_fecha = myTime           
 
         if self.type == "out_refund" and self.refund_invoice_id.uuid:
            xml_data = credit_note.set_data_for_invoice_credit(self)
