@@ -14,6 +14,7 @@ class AccountInvoice(models.Model):
     tipo_f = fields.Selection([
         ('normal', 'Factura Normal'),
         ('cambiaria', 'Factura Cambiaria'),
+        ('especial', 'Factura Especial'),        
         ], string='Tipo Factura', default='normal', readonly=True, states={'draft': [('readonly', False)]})
     regimen_antiguo = fields.Boolean(string="Nota de credito rebajando regimen antiguo", readonly=True, states={'draft': [('readonly', False)]}, default=False)
     nota_abono = fields.Boolean(string="Nota de Abono", readonly=True, states={'draft': [('readonly', False)]}, default=False)

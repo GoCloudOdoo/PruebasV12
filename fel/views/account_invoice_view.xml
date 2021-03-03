@@ -22,5 +22,17 @@
                         </field>
                 </field>
         </record>
+        
+        <record model='ir.ui.view' id='account_invoice_form_view_inherit_supplier'>
+                <field name='name'>account.invoice.form.inherit.supplier</field>
+                <field name='model'>account.invoice</field>
+                <field name='inherit_id' ref='account.invoice_supplier_form'/>
+                <field name='type'>form</field>
+                <field name='arch' type='xml'>             
+                        <field name="fiscal_position_id" position="after">
+                                <field name="tipo_f"/>
+                        </field>
+                </field>
+        </record>        
 </odoo>
 

@@ -18,6 +18,7 @@
                                 <field name="numero_dte"/>
                                 <field name="dte_fecha"/>
                                 <field name="letras"/>
+                                <field name="retencion"/>
                         </field>
                 </field>
         </record>
