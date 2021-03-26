@@ -28,3 +28,4 @@ from . import account_journal
 from . import credit_note
 from . import invoice_cancel
 from . import invoice_cambiaria
+from . import invoice_special
