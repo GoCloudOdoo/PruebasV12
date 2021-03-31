@@ -18,6 +18,16 @@ class AccountInvoiceSend(models.TransientModel):
             self.attachment_ids = [(6,0,[ids])]
 
     @api.multi
+    def _print_document(self):
+        """ to override for each type of models that will use this composer."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'name': 'FEL',
+            'url': '/web/content/%s?download=true' % (self.attachment_ids.id),
+        }
+
+    @api.multi
     def adjuntar_fel(self):
         invoice = self.env['account.invoice'].search([('id', '=', self.invoice_ids.id)], limit=1)
         url = 'https://report.feel.com.gt/ingfacereport/ingfacereport_documento?uuid='+invoice.uuid
