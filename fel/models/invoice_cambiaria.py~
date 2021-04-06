@@ -40,9 +40,12 @@ class AccountInvoice(models.Model):
         dem = ET.SubElement(dte, "{" + xmlns + "}DatosEmision", ID="DatosEmision")
         fecha_emision = dt.datetime.now(gettz("America/Guatemala")).__format__('%Y-%m-%dT%H:%M:%S.%f')[:-3]
         dge = ET.SubElement(dem, "{" + xmlns + "}DatosGenerales", CodigoMoneda="GTQ",  FechaHoraEmision=fecha_emision, Tipo="FCAM")
-        emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento="1", CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=self.company_id.name, NombreEmisor=self.company_id.name)
+        api = self.env['api.data.configuration'].search([('user_id', '=', self.user_id.id)], limit=1)
+        if not api:
+            return False          
+        emi = ET.SubElement(dem, "{" + xmlns + "}Emisor", AfiliacionIVA="GEN", CodigoEstablecimiento=api.code_est, CorreoEmisor=self.company_id.email, NITEmisor=self.company_id.vat, NombreComercial=api.nombre, NombreEmisor=self.company_id.name)
         dire = ET.SubElement(emi, "{" + xmlns + "}DireccionEmisor")
-        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = self.company_id.street
+        ET.SubElement(dire, "{" + xmlns + "}Direccion").text = api.direccion
         ET.SubElement(dire, "{" + xmlns + "}CodigoPostal").text = self.company_id.zip or "01009"
         ET.SubElement(dire, "{" + xmlns + "}Municipio").text = self.company_id.city or "Guatemala"
         ET.SubElement(dire, "{" + xmlns + "}Departamento").text = self.company_id.state_id.name or "Guatemala"

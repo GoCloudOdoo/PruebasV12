@@ -244,18 +244,19 @@ class AccountInvoice(models.Model):
 
         #Adenda
         ade = ET.SubElement(doc, "{" + xmlns + "}Adenda")
-        ET.SubElement(ade, "CAJERO").text = "1"
-        ET.SubElement(ade, "VENDEDOR").text = "1"
-        ET.SubElement(ade, "Subtotal").text = str(round(self.amount_untaxed,2))
-        ET.SubElement(ade, "Fuente").text = self.user_id.name
-        ET.SubElement(ade, "PRESUPUESTO").text = self.origin
-        ET.SubElement(ade, "DIAS_CREDITO").text = self.payment_term_id.name
         date_due = self.date_due
         date_due = datetime.strptime(str(date_due), '%Y-%m-%d')
         formato2 = "%d-%m-%Y"
         date_due = date_due.strftime(formato2)
         ET.SubElement(ade, "FECHA_VENCIMIENTO").text = date_due
+        ET.SubElement(ade, "DIAS_CREDITO").text = self.payment_term_id.name        
         ET.SubElement(ade, "NOTAS").text = self.comment
+        ET.SubElement(ade, "REFERENCIA").text = self.reference
+        ET.SubElement(ade, "INCOTERM").text = self.incoterm_id.name
+        ET.SubElement(ade, "ORIGEN").text = self.origin
+        ET.SubElement(ade, "VENDEDOR").text = self.user_id.name
+        ET.SubElement(ade, "NUMERO-INTERNO").text = self.number
+        ET.SubElement(ade, "TELEFONO").text = self.partner_id.phone + " " + self.partner_id.mobile                                                
         cont = ET.tostring(root, encoding="UTF-8", method='xml')
         buscar = "ns0"
         rmpl = "dte"
