@@ -69,7 +69,7 @@ class AccountInvoice(models.Model):
               xml_data = self.set_data_for_invoice_special()
               self.letras = str(numero_a_texto.Numero_a_Texto(self.amount_total))
               uuid, serie, numero_dte, dte_fecha =self.send_data_api_special(xml_data)
-              message = _("Facturacion Electronica Especial %s: Serie %s  Numero %s") % (self.tipo_f, serie, numero_dte)
+              message = _("Facturacion Electronica Especial: Serie %s  Numero %s") % (serie, numero_dte)
               self.message_post(body=message)
               self.uuid = uuid
               self.serie = serie
